@@ -321,6 +321,12 @@ def getUserData(usr_name: str, data: str) -> str:
 
 
 def CalcLeaderboard(prnt=False) -> list:
+    """
+    Calculates the leaderboard of players. Gets user data as dict from all_users.json file, creates a new dict of
+    usernames and scores, sorts the dict by values and outputs as list of tuples.
+    :param prnt: bool - True/False - whether to print or not the top 3 places and their score; default set to False.
+    :return: Leaderboard as list of tuples.
+    """
     with open("Resources/all_users.json", "r") as usrs_f:
         users = json.load(usrs_f)
     users_scores = {usr: data["Score"] for usr, data in users.items()}  # create a dict of users and scores only
@@ -337,6 +343,12 @@ def CalcLeaderboard(prnt=False) -> list:
 
 
 def getUserRank(usr_name: str, ldr_brd: list) -> int:
+    """
+    Fetches the user's rank from the leaderboard.
+    :param usr_name: User's name to be checked.
+    :param ldr_brd: Leaderboard to be checked from.
+    :return: User's rank in the leaderboard.
+    """
     usr_rank = None
     for usr_lst in ldr_brd:
         if usr_name == usr_lst[0]:
@@ -345,12 +357,23 @@ def getUserRank(usr_name: str, ldr_brd: list) -> int:
     return usr_rank
 
 
-def printUserRank(usr_rank: int):
+def printUserRank(usr_rank: int) -> None:
+    """
+    Prints the user's rank with the inflect module = 1st, 2nd, 3rd, etc..
+    :param usr_rank: User's name to be printed.
+    :return: None
+    """
     p = inflect.engine()  # convert number to numeric suffix: 1st, 2nd, 3rd, etc...
-    print("You are currently ranked in " + str(p.ordinal(usr_rank)) + " place.")
+    print("You are currently ranked in the " + str(p.ordinal(usr_rank)) + " place.")
 
 
-def genPodium(ldr_brd: list):
+def genPodium(ldr_brd: list) -> str:
+    """
+    Gets the podium art from podium.txt, switches the top three players from the leaderboard into a new copied file,
+    returns  the named podium as str.
+    :param ldr_brd: Leaderboard to check the top 3 players from.
+    :return: Str of new podium with top 3 player's usernames.
+    """
     with open("Resources/podium.txt", "r") as pdm_f:
         art = pdm_f.read()
 
@@ -378,7 +401,11 @@ def genPodium(ldr_brd: list):
     return podium
 
 
-def main():
+def main() -> None:
+    """
+    Main function that runs the program.
+    :return: None.
+    """
     user_name = input("Enter your user name: ")
     checkUser(user_name)
     rounds = int(input("Enter the amount of rounds you'd like to play: "))
@@ -389,7 +416,7 @@ def main():
     leaderboard = CalcLeaderboard()
     user_rank = getUserRank(usr_name=user_name, ldr_brd=leaderboard)
     printUserRank(user_rank)
-    print(genPodium(leaderboard))
+    # print(genPodium(leaderboard))
 
 
 if __name__ == "__main__":
