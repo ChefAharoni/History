@@ -1,28 +1,33 @@
 {
   "ChefStar": {
     "ID": 0,
-    "Score": 340,
-    "Join Date": "January, 23, 2023"
+    "Score": 440,
+    "Join Date": "January, 23, 2023",
+    "Average answer time per round": 1.9174652576446534
   },
   "MrWorldWide": {
     "ID": 1,
-    "Score": 5,
-    "Join Date": "January, 23, 2023"
+    "Score": 20,
+    "Join Date": "January, 23, 2023",
+    "Average answer time per round": 17.860716819763184
   },
   "EuropeKing": {
     "ID": 2,
-    "Score": 24,
-    "Join Date": "January, 23, 2023"
+    "Score": 56,
+    "Join Date": "January, 23, 2023",
+    "Average answer time per round": 2.400921106338501
   },
   "DontMessWithTheZohan": {
     "ID": 3,
-    "Score": 7,
-    "Join Date": "January, 23, 2023"
+    "Score": 10,
+    "Join Date": "January, 23, 2023",
+    "Average answer time per round": 3.49042546749115
   },
   "Thanos": {
     "ID": 4,
-    "Score": 61,
-    "Join Date": "January, 23, 2023"
+    "Score": 137,
+    "Join Date": "January, 23, 2023",
+    "Average answer time per round": 1.3131804466247559
   },
   "AbuAli": {
     "ID": 5,

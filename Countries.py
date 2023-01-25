@@ -1,9 +1,9 @@
+from random import randint  # to randomly draw countries
 import json  # to handle json filed
-from typing import Any  # for type hints
+from typing import Any, Type  # for type hints
 import inflect  # for formatting number strings: 1st, 2nd, 3rd, etc..
 from Resources.myStyles import Colors  # for formatting strings with colors
-
-# from colorama import Fore, Back, Style  # used for color formatting with highlighting
+from colorama import Fore, Back, Style  # used for color formatting with highlighting (ex. wrong/correct answers)
 
 COUNTRIES = ['Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria', 'Croatia',
              'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland',
@@ -14,9 +14,9 @@ COUNTRIES = ['Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 'Bosnia and 
 
 Countries_to_Check = ['Albania', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria', 'Croatia',
                       'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany', 'Greece', 'Hungary',
-                      'Iceland', 'Ireland', 'Italy', 'Latvia', 'Lithuania', 'Moldova', 'Netherlands',
-                      'Norway', 'Poland', 'Portugal', 'Romania', 'Russia', 'Serbia', 'Slovakia', 'Slovenia', 'Spain',
-                      'Sweden', 'Switzerland', 'Ukraine', 'United Kingdom']
+                      'Iceland', 'Ireland', 'Italy', 'Latvia', 'Lithuania', 'Moldova', 'Netherlands', 'Norway',
+                      'Poland', 'Portugal', 'Romania', 'Russia', 'Serbia', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+                      'Switzerland', 'Ukraine', 'United Kingdom']
 
 CAPITALS = ['Tirana', 'Andorra la Vella', 'Vienna', 'Minsk', 'Brussels', 'Sarajevo', 'Sofia', 'Zagreb', 'Prague',
             'Copenhagen', 'Tallinn', 'Helsinki', 'Paris', 'Berlin', 'Athens', 'Budapest', 'Reykjavik', 'Dublin', 'Rome',
@@ -76,7 +76,7 @@ def createList(f_name: str) -> list:
     return constant_data
 
 
-def checkX():
+def checkX() -> None:
     from random import randint
     print("Length of dict:", len(COUNTRIES_AND_CAPITALS.keys()))
     x_s = list()
@@ -88,19 +88,26 @@ def checkX():
     print("\n", x_s)
 
 
-def drawCountry():
+def drawCountry() -> str:
     """
     Draws a random number from 0 to the length of the countries and capitals dict.
     @return: Country from COUNTRIES list.
     """
-    from random import randint
-    x = randint(0, len(Countries_to_Check) - 1)
+    x = randint(0, len(Countries_to_Check) - 1)  # len func starts from 1, whereas indexing from list starts from 0
     return Countries_to_Check[x]
 
 
-def severalCountries():
-    # func to draw several countries that are unique, so for several rounds no country will repeat itself.
-    pass
+def severalCountries(r: int) -> set:
+    """
+    Creates a set of unique countries, randomly selected.
+    :param r: Number of rounds player wishes to play.
+    :return: Set of selected randomly countries.
+    """
+    random_countries = set()
+    while len(random_countries) < r:
+        x = randint(0, len(Countries_to_Check) - 1)  # len func starts from 1, whereas indexing from list starts from 0
+        random_countries.add(Countries_to_Check[x])
+    return random_countries
 
 
 def guessCountry(country: str) -> str:
@@ -147,18 +154,19 @@ def deductScore(usr_name: str, score_to_deduce: int) -> None:
         json.dump(users, usrs_w_f, indent=2)
 
 
-def checkAnswer(usr_name: str) -> bool:
+def checkAnswer(usr_name: str, country: str) -> bool:
     """
     Checks if user's input is correct; If user asks for hint, calls reqHint for hint prompts; if answer is not hint and
     not correct - checks for spelling through spellCheck. (later, if answer is not close to the answer, answer is marked
     wrong and points are deducted).
     @param usr_name: User's name to look up in the users table (all_users.json)
+    @param country: Country to be checked.
     @return: Boolean if answer is true, or calls reqHint or spellCheck. [currently there is no use in returned bool]
     """
-    country = drawCountry()
     answer = guessCountry(country)
     capital = COUNTRIES_AND_CAPITALS[country]
-    correct_answer = "\nCorrect! " + country + "'s capital is indeed", capital + ".\n"
+    correct_answer = "\n" + Back.GREEN + "Correct!" + Style.RESET_ALL + " " + country + \
+                     "'s capital is indeed", capital + ".\n"
     if answer == capital:
         print(*correct_answer)  # correct_answer is tuple, * is unpacking to print normal
         addScore(usr_name=usr_name, score_to_add=5)  # adds 5 points to player
@@ -188,7 +196,8 @@ def reqHint(answer: str, country: str, capital: str, usr_name: str) -> bool:  # 
     """
     p = inflect.engine()  # convert number to numeric suffix: 1st, 2nd, 3rd, etc...
     # wrong_answer = "\nWrong ;(\n" + country + "'s capital is", capital + ".\n"
-    correct_answer = "\nCorrect! " + country + "'s capital is indeed", capital + ".\n"
+    correct_answer = "\n" + Back.GREEN + "Correct!" + Style.RESET_ALL + " " + country + \
+                     "'s capital is indeed", capital + ".\n"
     max_hints = len(capital) - 2  # maximum number of hints = the length of the capitals name minus 2.
     hint_loc = 1  # flagger inside while loop to indicate location; 0 has no meaning since going up until this location.
 
@@ -255,8 +264,10 @@ def spellCheck(answer: str, country: str, capital: str, usr_name: str) -> bool:
     @param usr_name: User's name to look up in the users table (all_users.json)
     @return: True if answer is correct, false if answer is wrong.
     """
-    wrong_answer = "\nWrong ;(\n" + country + "'s capital is", capital + ".\n"
-    correct_answer = "\nCorrect! " + country + "'s capital is indeed", capital + ".\n"
+    wrong_answer = "\n" + Back.BLACK + "Wrong ;(" + Style.RESET_ALL + "\n" + country + "'s capital is", capital + \
+                   ".\n"
+    correct_answer = "\n" + Back.GREEN + "Correct!" + Style.RESET_ALL + " " + country + \
+                     "'s capital is indeed", capital + ".\n"
     if answer == capital:
         print(*correct_answer)  # correct_answer is tuple, * is unpacking to print normal
         addScore(usr_name=usr_name, score_to_add=2)  # adds 2 points to player
@@ -340,7 +351,7 @@ def checkUser(usr_name: str) -> int:
         return 0  # == user score, which is set to zero since it's a new user.
 
 
-def getUserData(usr_name: str, data: str):
+def getUserData(usr_name: str, data: str) -> None | int:
     """
     Checks if user is in dict of all users (all_users.json); if so - gets the user's data from the dict.
     Used mainly for checking user's score, can be used to check any other data (join date, ID, etc..)
@@ -385,6 +396,7 @@ def getUserRank(usr_name: str, ldr_brd: list) -> int:
     :param ldr_brd: Leaderboard to be checked from.
     :return: User's rank in the leaderboard.
     """
+    # In the future, implement a feature that checks if the player's location in the leaderboard has changed.
     usr_rank = None
     for usr_lst in ldr_brd:
         if usr_name == usr_lst[0]:
@@ -459,9 +471,56 @@ def changeInScore(old_score: int, new_score: int) -> int:
         return diff
 
 
-def chooseMode():
-    # func to let user choose if 1 round is needed or more
-    pass
+def chooseMode(usr_name) -> Type[ValueError] | None:
+    """
+    Prompts the user to choose the game mode; 1 == single round; >1 means several rounds. If >1, draws set of several
+    countries in a unique set, so no country will be repeated.
+    VALID PROMPTS ARE NOT CHECKED YET; PLEASE INSERT PROPER PROMPT CHECK.
+    :param usr_name: Player's username.
+    :return: None (or error if user's prompt is invalid)
+    """
+    # enter check for proper input
+    import time
+    avg_t_per_round = 0.0
+    rounds = int(input("Enter the amount of rounds you'd like to play: "))
+    if rounds == 1:
+        country = drawCountry()
+        start_time = time.time()  # start countdown of clock
+        checkAnswer(usr_name, country=country)
+        avg_t_per_round = time.time() - start_time  # stop countdown of clock; add time value to variable.
+    elif rounds > 1:
+        selected_countries = severalCountries(rounds)
+        total_answer_t = 0.0
+        for country in selected_countries:
+            start_time = time.time()  # start countdown of clock
+            checkAnswer(usr_name, country=country)
+            round_time = (time.time() - start_time)  # stop countdown of clock; add time value to variable.
+            total_answer_t += round_time
+        avg_t_per_round = total_answer_t / rounds  # To calc avg, dividing the total answer time by the number of rounds
+    else:  # change later to proper value checking
+        return ValueError
+    updateAvgTimePerRound(usr_name=usr_name, key="Average answer time per round", this_round_avg_t_pr=avg_t_per_round)
+
+
+def updateAvgTimePerRound(usr_name: str, key: str, this_round_avg_t_pr: float) -> None:
+    """
+    Updates the Average Time Per Round in the users' dict (all_users.json).
+    :param usr_name: User's name to get updated.
+    :param key: Key in dict to check; technically it could be the name of the key without the need for this parameter,
+    but it may be useful in the future.
+    :param this_round_avg_t_pr: The avg time to be updated to the table.
+    :return: None
+    """
+    with open("Resources/all_users.json", "r") as usrs_r_f:
+        users = json.load(usrs_r_f)  # this is now a dict
+        if key in users.keys():
+            current_avg_t_pr = users[usr_name][key]  # check what is the current user's avg time per round
+        else:
+            current_avg_t_pr = 0
+    with open("Resources/all_users.json", "w") as usrs_w_f:
+        new_avg_t_pr = (current_avg_t_pr + this_round_avg_t_pr) / 2
+        users[usr_name][key] = new_avg_t_pr
+        json.dump(users, usrs_w_f, indent=2)
 
 
 def main() -> None:
@@ -472,15 +531,16 @@ def main() -> None:
     user_name = input("Enter your user name: ")
     initiated_score = getUserData(usr_name=user_name, data="Score")
     checkUser(user_name)  # includes printing the user's score
-    rounds = int(input("Enter the amount of rounds you'd like to play: "))
-    for i in range(rounds):
-        checkAnswer(usr_name=user_name)
+    chooseMode(user_name)  # chooses number of rounds
     user_score = getUserData(usr_name=user_name, data="Score")
     print("Your updated score is " + Colors.BOLD + str(user_score) + Colors.END + ".")
     leaderboard = CalcLeaderboard()
     user_rank = getUserRank(usr_name=user_name, ldr_brd=leaderboard)
     printUserRank(user_rank)
     changeInScore(old_score=initiated_score, new_score=user_score)
+    print("\n------------------------------------\n")
+    user_avg_ans_t = getUserData(usr_name=user_name, data="Average answer time per round")
+    print(f'Your average answer time per round is {Fore.LIGHTWHITE_EX}{user_avg_ans_t:.3f}{Fore.RESET} seconds.')
     # print(genPodium(leaderboard))
 
 
