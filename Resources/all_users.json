@@ -1,9 +1,9 @@
 {
   "ChefStar": {
     "ID": 0,
-    "Score": 440,
+    "Score": 436,
     "Join Date": "January, 23, 2023",
-    "Average answer time per round": 1.9174652576446534
+    "Average answer time per round": 2.604166626930237
   },
   "MrWorldWide": {
     "ID": 1,
@@ -25,9 +25,9 @@
   },
   "Thanos": {
     "ID": 4,
-    "Score": 137,
+    "Score": 128,
     "Join Date": "January, 23, 2023",
-    "Average answer time per round": 1.3131804466247559
+    "Average answer time per round": 2.7291630506515503
   },
   "AbuAli": {
     "ID": 5,
@@ -38,5 +38,23 @@
     "ID": 6,
     "Score": 4,
     "Join Date": "January, 24, 2023"
+  },
+  "Aang": {
+    "ID": 7,
+    "Score": -14,
+    "Join Date": "January, 25, 2023",
+    "Average answer time per round": 0.940227210521698
+  },
+  "Aapa": {
+    "ID": 8,
+    "Score": -6,
+    "Join Date": "January, 25, 2023",
+    "Average answer time per round": 1.3143627643585205
+  },
+  "Katara": {
+    "ID": 9,
+    "Score": 33,
+    "Join Date": "January, 25, 2023",
+    "Average answer time per round": 6.427717983722687
   }
 }

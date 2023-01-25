@@ -1,3 +1,4 @@
+import time
 from random import randint  # to randomly draw countries
 import json  # to handle json filed
 from typing import Any, Type  # for type hints
@@ -117,6 +118,7 @@ def guessCountry(country: str) -> str:
     @return: user's answer of the country
     """
     print("What is", Colors.BOLD + country + Colors.END + "'s capital?")
+    time.sleep(0.25)
     usr_answer = input(">>> ")
     usr_answer = usr_answer.lower().title()
     return usr_answer
@@ -201,15 +203,16 @@ def reqHint(answer: str, country: str, capital: str, usr_name: str) -> bool:  # 
     max_hints = len(capital) - 2  # maximum number of hints = the length of the capitals name minus 2.
     hint_loc = 1  # flagger inside while loop to indicate location; 0 has no meaning since going up until this location.
 
-    def checkInsideAnswer(country, capital, usr_name):
+    def checkInsideAnswer(c_country, c_capital, c_usr_name):
+        time.sleep(0.25)
         sec_answ = input(">>> ")
         sec_answ = sec_answ.lower().title()
-        if sec_answ == capital:
+        if sec_answ == c_capital:
             print(*correct_answer)  # correct_answer is tuple, * is unpacking to print normal
-            addScore(usr_name=usr_name, score_to_add=2)  # adds 2 points to player
+            addScore(usr_name=c_usr_name, score_to_add=2)  # adds 2 points to player
             return True
         else:
-            spellCheck(sec_answ, country, capital, usr_name=usr_name)
+            spellCheck(sec_answ, c_country, c_capital, usr_name=c_usr_name)
 
     if answer == capital:
         print(*correct_answer)  # correct_answer is tuple, * is unpacking to print normal
@@ -217,7 +220,7 @@ def reqHint(answer: str, country: str, capital: str, usr_name: str) -> bool:  # 
         return True
     elif hint_loc >= max_hints and answer != capital:
         print("Sorry, you've reached maximum hints.")
-        checkInsideAnswer(capital=capital, country=country, usr_name=usr_name)
+        checkInsideAnswer(c_capital=capital, c_country=country, c_usr_name=usr_name)
         # second_answer = input(">>> ")
         # second_answer = second_answer.lower().title()
         # if second_answer == capital:
@@ -229,7 +232,7 @@ def reqHint(answer: str, country: str, capital: str, usr_name: str) -> bool:  # 
     elif answer == "Hint":
         print("The " + str(p.ordinal(hint_loc)) + " letter is " + capital[:hint_loc])
         hint_loc += 1
-        checkInsideAnswer(capital=capital, country=country, usr_name=usr_name)
+        checkInsideAnswer(c_capital=capital, c_country=country, c_usr_name=usr_name)
         # while hint_loc <= max_hints and (second_answer == "Hint" or answer == "Hint"):
         #     # if hint_loc >= max_hints:
         #     #     print("Sorry, you've reached maximum hints.")
@@ -275,6 +278,7 @@ def spellCheck(answer: str, country: str, capital: str, usr_name: str) -> bool:
     elif answer.startswith(capital[:4]) or answer.endswith(capital[-3:]):  # number 4 is prone to error for short names
         print("Sorry, couldn't found " + Colors.ITALIC + answer + Colors.END + " in our database.")
         print("Did you mean " + capital + "?")
+        time.sleep(0.25)
         second_answer = input(">>> ")
         second_answer = second_answer.upper()
         if second_answer == "YES":  # if user says the suggested name is his answer
@@ -480,8 +484,6 @@ def chooseMode(usr_name) -> Type[ValueError] | None:
     :return: None (or error if user's prompt is invalid)
     """
     # enter check for proper input
-    import time
-    avg_t_per_round = 0.0
     rounds = int(input("Enter the amount of rounds you'd like to play: "))
     if rounds == 1:
         country = drawCountry()
@@ -500,6 +502,7 @@ def chooseMode(usr_name) -> Type[ValueError] | None:
     else:  # change later to proper value checking
         return ValueError
     updateAvgTimePerRound(usr_name=usr_name, key="Average answer time per round", this_round_avg_t_pr=avg_t_per_round)
+
 
 
 def updateAvgTimePerRound(usr_name: str, key: str, this_round_avg_t_pr: float) -> None:
@@ -529,8 +532,8 @@ def main() -> None:
     :return: None.
     """
     user_name = input("Enter your user name: ")
-    initiated_score = getUserData(usr_name=user_name, data="Score")
     checkUser(user_name)  # includes printing the user's score
+    initiated_score = getUserData(usr_name=user_name, data="Score")
     chooseMode(user_name)  # chooses number of rounds
     user_score = getUserData(usr_name=user_name, data="Score")
     print("Your updated score is " + Colors.BOLD + str(user_score) + Colors.END + ".")
@@ -542,6 +545,8 @@ def main() -> None:
     user_avg_ans_t = getUserData(usr_name=user_name, data="Average answer time per round")
     print(f'Your average answer time per round is {Fore.LIGHTWHITE_EX}{user_avg_ans_t:.3f}{Fore.RESET} seconds.')
     # print(genPodium(leaderboard))
+
+
 
 
 if __name__ == "__main__":
