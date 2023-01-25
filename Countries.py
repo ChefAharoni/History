@@ -1,7 +1,7 @@
 import json  # to handle json filed
 from typing import Any  # for type hints
 import inflect  # for formatting number strings: 1st, 2nd, 3rd, etc..
-from myStyles import Colors  # for formatting strings with colors
+from Resources.myStyles import Colors  # for formatting strings with colors
 
 # from colorama import Fore, Back, Style  # used for color formatting with highlighting
 
@@ -104,10 +104,10 @@ def addScore(usr_name: str, score_to_add: int) -> None:
     @param score_to_add: int of score to be added to the dict
     @return: None
     """
-    with open("all_users.json", "r") as usrs_r_f:
+    with open("Resources/all_users.json", "r") as usrs_r_f:
         users = json.load(usrs_r_f)  # this is now a dict
         current_score = users[usr_name]["Score"]  # check what is the current user's score
-    with open("all_users.json", "w") as usrs_w_f:
+    with open("Resources/all_users.json", "w") as usrs_w_f:
         new_score = current_score + score_to_add
         users[usr_name]["Score"] = new_score
         json.dump(users, usrs_w_f, indent=2)
@@ -120,10 +120,10 @@ def deductScore(usr_name: str, score_to_deduce: int) -> None:
     @param score_to_deduce: int of score to be deducted from the dict
     @return: None
     """
-    with open("all_users.json", "r") as usrs_r_f:
+    with open("Resources/all_users.json", "r") as usrs_r_f:
         users = json.load(usrs_r_f)  # this is now a dict
         current_score = users[usr_name]["Score"]  # check what is the current user's score
-    with open("all_users.json", "w") as usrs_w_f:
+    with open("Resources/all_users.json", "w") as usrs_w_f:
         new_score = current_score - score_to_deduce
         users[usr_name]["Score"] = new_score
         json.dump(users, usrs_w_f, indent=2)
@@ -261,9 +261,9 @@ def addUser(usr_name: str) -> None:
             self.id = self.user_id
             self.score = score
 
-    with open("all_users.json", "r") as usrs_r_f:
+    with open("Resources/all_users.json", "r") as usrs_r_f:
         users = json.load(usrs_r_f)  # this is now a dict; import json used at top
-    with open("all_users.json", "w") as usrs_w_f:
+    with open("Resources/all_users.json", "w") as usrs_w_f:
         new_usr = User(score=0)  # set a new user with the score 0; ID is auto assigned
         users[usr_name] = {"ID": new_usr.id, "Score": new_usr.score, "Join Date": new_usr.join_date}
         json.dump(users, usrs_w_f, indent=2)
@@ -274,10 +274,10 @@ def assignID() -> int:
     Reads the last ID assigned from IDs.json, increments by 1, updates the IDs.json.
     @return: New ID to be assigned.
     """
-    with open("IDs.json", "r") as ID_r_f:
+    with open("Resources/IDs.json", "r") as ID_r_f:
         id_data = json.load(ID_r_f)  # Dict of all ids
         last_id = id_data["Last ID"]  # get the last ID assigned
-    with open("IDs.json", "w") as ID_w_f:
+    with open("Resources/IDs.json", "w") as ID_w_f:
         new_id = last_id + 1  # add 1 to the last ID
         id_data["Last ID"] = new_id
         json.dump(id_data, ID_w_f, indent=2)
@@ -291,7 +291,7 @@ def checkUser(usr_name: str) -> int:
     @param usr_name: username to be checked or added.
     @return: Users score (or zero if user is new)
     """
-    with open("all_users.json", "r") as usrs_f:
+    with open("Resources/all_users.json", "r") as usrs_f:
         users = json.load(usrs_f)
     if usr_name in users.keys():
         print("Welcome back, " + Colors.GREEN + usr_name + Colors.END + "!")
@@ -312,7 +312,7 @@ def getUserData(usr_name: str, data: str) -> str:
     @param data: Type of data to be searched
     @return: Data requested of user or error if data/user not found.
     """
-    with open("all_users.json", "r") as usrs_f:
+    with open("Resources/all_users.json", "r") as usrs_f:
         users = json.load(usrs_f)
     if data in users[usr_name]:
         return users[usr_name][data]
@@ -321,7 +321,7 @@ def getUserData(usr_name: str, data: str) -> str:
 
 
 def CalcLeaderboard(prnt=False) -> list:
-    with open("all_users.json", "r") as usrs_f:
+    with open("Resources/all_users.json", "r") as usrs_f:
         users = json.load(usrs_f)
     users_scores = {usr: data["Score"] for usr, data in users.items()}  # create a dict of users and scores only
     ldr_brd = (sorted(users_scores.items(), key=lambda item: item[1], reverse=True))  # list of tuples
@@ -351,7 +351,7 @@ def printUserRank(usr_rank: int):
 
 
 def genPodium(ldr_brd: list):
-    with open("podium.txt", "r") as pdm_f:
+    with open("Resources/podium.txt", "r") as pdm_f:
         art = pdm_f.read()
 
     first_place = ldr_brd[0]
@@ -362,17 +362,17 @@ def genPodium(ldr_brd: list):
                "\t\t" + str(second_place[1]),
                "\t  " + str(third_place[1]) + "\tֿ"]
     tags = ["@first_p", "@second_p", "@third_p", "@first_score", "@second_score", "@third_score"]
-    with open("podium_winners.txt", "w") as copy_file:
+    with open("Resources/podium_winners.txt", "w") as copy_file:
         copy_file.write(art)  # copied the content of the podium txt file to another file; so the file with the winners
         # to be changed will renew every run
-    with open("podium.txt", "r") as read_pdm_f:
-        with open("podium_winners.txt", "w") as pdm_wins_f:
+    with open("Resources/podium.txt", "r") as read_pdm_f:
+        with open("Resources/podium_winners.txt", "w") as pdm_wins_f:
             for line in read_pdm_f:
                 for tag, winner in zip(tags, winners):
                     line = line.replace(tag, str(winner))
                 pdm_wins_f.write(line)
 
-    with open("podium_winners.txt", "r") as final_read_f:
+    with open("Resources/podium_winners.txt", "r") as final_read_f:
         podium = final_read_f.read()  # load the updated podium
 
     return podium
