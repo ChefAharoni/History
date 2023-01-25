@@ -12,6 +12,12 @@ COUNTRIES = ['Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 'Bosnia and 
              'San Marino', 'Serbia', 'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Ukraine',
              'United Kingdom']
 
+Countries_to_Check = ['Albania', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria', 'Croatia',
+                      'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany', 'Greece', 'Hungary',
+                      'Iceland', 'Ireland', 'Italy', 'Latvia', 'Lithuania', 'Moldova', 'Netherlands',
+                      'Norway', 'Poland', 'Portugal', 'Romania', 'Russia', 'Serbia', 'Slovakia', 'Slovenia', 'Spain',
+                      'Sweden', 'Switzerland', 'Ukraine', 'United Kingdom']
+
 CAPITALS = ['Tirana', 'Andorra la Vella', 'Vienna', 'Minsk', 'Brussels', 'Sarajevo', 'Sofia', 'Zagreb', 'Prague',
             'Copenhagen', 'Tallinn', 'Helsinki', 'Paris', 'Berlin', 'Athens', 'Budapest', 'Reykjavik', 'Dublin', 'Rome',
             'Riga', 'Vaduz', 'Vilnius', 'Luxembourg', 'Valletta', 'Chisinau', 'Monaco', 'Podgorica', 'Amsterdam',
@@ -34,12 +40,19 @@ COUNTRIES_AND_CAPITALS = {'Albania': 'Tirana', 'Andorra': 'Andorra la Vella', 'A
 all_users = dict()
 
 
-def createDict() -> dict:
-    countries_and_capitals = dict()
-    for i in range(len(COUNTRIES)):
-        countries_and_capitals[COUNTRIES[i]] = CAPITALS[i]
-    print(countries_and_capitals)
-    return countries_and_capitals
+def createDict(data_keys: list, data_values: list) -> dict:
+    """
+    Creates a dict from two lists; first one as key and second list as values.
+    Used as countries_and_capitals generator.
+    @:param data_keys: list that will be assigned as keys to the dict.
+    @:param data_values: list that will be assigned as values to the dict.
+    :return: dict of combined two lists.
+    """
+    complete_dict = dict()  # at the beginning it was "countries and capitals"
+    for i in range(len(data_keys)):
+        complete_dict[data_keys[i]] = data_values[i]
+    print(complete_dict)
+    return complete_dict
 
 
 def createList(f_name: str) -> list:
@@ -81,8 +94,13 @@ def drawCountry():
     @return: Country from COUNTRIES list.
     """
     from random import randint
-    x = randint(0, len(COUNTRIES_AND_CAPITALS.keys()) - 1)
-    return COUNTRIES[x]
+    x = randint(0, len(Countries_to_Check) - 1)
+    return Countries_to_Check[x]
+
+
+def severalCountries():
+    # func to draw several countries that are unique, so for several rounds no country will repeat itself.
+    pass
 
 
 def guessCountry(country: str) -> str:
@@ -151,6 +169,12 @@ def checkAnswer(usr_name: str) -> bool:
         spellCheck(answer, country, capital, usr_name=usr_name)
 
 
+def checkAnotherCapital():
+    # func to check if user's answer is another country's capital.
+    # ex - user entered Stockholm for Norway, func will return Stockholm's country.
+    pass
+
+
 def reqHint(answer: str, country: str, capital: str, usr_name: str) -> bool:  # currently not working
     """
     NOT WORKING PROPERLY ATM; loop problems - function won't exit properly if there is max hints and the answer is wrong
@@ -167,42 +191,53 @@ def reqHint(answer: str, country: str, capital: str, usr_name: str) -> bool:  # 
     correct_answer = "\nCorrect! " + country + "'s capital is indeed", capital + ".\n"
     max_hints = len(capital) - 2  # maximum number of hints = the length of the capitals name minus 2.
     hint_loc = 1  # flagger inside while loop to indicate location; 0 has no meaning since going up until this location.
-    if answer == capital:
-        print(*correct_answer)  # correct_answer is tuple, * is unpacking to print normal
-        addScore(usr_name=usr_name, score_to_add=2)  # adds 2 points to player
-        return True
-    elif answer == "Hint":
-        print("The " + str(p.ordinal(hint_loc)) + " letter is " + capital[:hint_loc])
-        hint_loc += 1
-        second_answer = input(">>> ")
-        second_answer = second_answer.lower().title()
-        while hint_loc <= max_hints and (second_answer == "Hint" or answer == "Hint"):
-            # if hint_loc >= max_hints:
-            #     print("Sorry, you've reached maximum hints.")
-            # else:
-            print("The " + str(p.ordinal(hint_loc)) + " letter is " + capital[:hint_loc])
-            hint_loc += 1
-            second_answer = input(">>> ")
-            second_answer = second_answer.lower().title()
-            if second_answer == capital:
-                print(*correct_answer)  # correct_answer is tuple, * is unpacking to print normal
-                addScore(usr_name=usr_name, score_to_add=2)  # adds 2 points to player
-                return True
-            elif answer == "Hint" or second_answer == "Hint":
-                continue
-            else:
-                spellCheck(second_answer, country, capital, usr_name=usr_name)
-                break
-    elif hint_loc >= max_hints and answer != capital:
-        print("Sorry, you've reached maximum hints.")
-        second_answer = input(">>> ")
-        second_answer = second_answer.lower().title()
-        if second_answer == capital:
+
+    def checkInsideAnswer(country, capital, usr_name):
+        sec_answ = input(">>> ")
+        sec_answ = sec_answ.lower().title()
+        if sec_answ == capital:
             print(*correct_answer)  # correct_answer is tuple, * is unpacking to print normal
             addScore(usr_name=usr_name, score_to_add=2)  # adds 2 points to player
             return True
         else:
-            spellCheck(second_answer, country, capital, usr_name=usr_name)
+            spellCheck(sec_answ, country, capital, usr_name=usr_name)
+
+    if answer == capital:
+        print(*correct_answer)  # correct_answer is tuple, * is unpacking to print normal
+        addScore(usr_name=usr_name, score_to_add=2)  # adds 2 points to player
+        return True
+    elif hint_loc >= max_hints and answer != capital:
+        print("Sorry, you've reached maximum hints.")
+        checkInsideAnswer(capital=capital, country=country, usr_name=usr_name)
+        # second_answer = input(">>> ")
+        # second_answer = second_answer.lower().title()
+        # if second_answer == capital:
+        #     print(*correct_answer)  # correct_answer is tuple, * is unpacking to print normal
+        #     addScore(usr_name=usr_name, score_to_add=2)  # adds 2 points to player
+        #     return True
+        # else:
+        #     spellCheck(second_answer, country, capital, usr_name=usr_name)
+    elif answer == "Hint":
+        print("The " + str(p.ordinal(hint_loc)) + " letter is " + capital[:hint_loc])
+        hint_loc += 1
+        checkInsideAnswer(capital=capital, country=country, usr_name=usr_name)
+        # while hint_loc <= max_hints and (second_answer == "Hint" or answer == "Hint"):
+        #     # if hint_loc >= max_hints:
+        #     #     print("Sorry, you've reached maximum hints.")
+        #     # else:
+        #     print("The " + str(p.ordinal(hint_loc)) + " letter is " + capital[:hint_loc])
+        #     hint_loc += 1
+        #     second_answer = input(">>> ")
+        #     second_answer = second_answer.lower().title()
+        #     if second_answer == capital:
+        #         print(*correct_answer)  # correct_answer is tuple, * is unpacking to print normal
+        #         addScore(usr_name=usr_name, score_to_add=2)  # adds 2 points to player
+        #         return True
+        #     elif answer == "Hint" or second_answer == "Hint":
+        #         continue
+        #     else:
+        #         spellCheck(second_answer, country, capital, usr_name=usr_name)
+        #         break
     else:
         spellCheck(answer, country, capital, usr_name=usr_name)
         # return False  # return False only if this is wrong answer again.
@@ -241,6 +276,7 @@ def spellCheck(answer: str, country: str, capital: str, usr_name: str) -> bool:
             return False
     else:
         print(*wrong_answer)
+        deductScore(usr_name=usr_name, score_to_deduce=2)  # deduce 2 points to player
         return False
 
 
@@ -304,12 +340,12 @@ def checkUser(usr_name: str) -> int:
         return 0  # == user score, which is set to zero since it's a new user.
 
 
-def getUserData(usr_name: str, data: str) -> str:
+def getUserData(usr_name: str, data: str):
     """
     Checks if user is in dict of all users (all_users.json); if so - gets the user's data from the dict.
     Used mainly for checking user's score, can be used to check any other data (join date, ID, etc..)
     @param usr_name: User's name to be checked.
-    @param data: Type of data to be searched
+    @param data: Type of data to be searched.
     @return: Data requested of user or error if data/user not found.
     """
     with open("Resources/all_users.json", "r") as usrs_f:
@@ -317,7 +353,7 @@ def getUserData(usr_name: str, data: str) -> str:
     if data in users[usr_name]:
         return users[usr_name][data]
     else:
-        return "Error, data requested not found in dictionary."
+        return None
 
 
 def CalcLeaderboard(prnt=False) -> list:
@@ -364,11 +400,13 @@ def printUserRank(usr_rank: int) -> None:
     :return: None
     """
     p = inflect.engine()  # convert number to numeric suffix: 1st, 2nd, 3rd, etc...
-    print("You are currently ranked in the " + str(p.ordinal(usr_rank)) + " place.")
+    print(f"You are currently ranked in the {Colors.BOLD}{Colors.YELLOW}{(p.ordinal(usr_rank))}{Colors.END} place.")
 
 
 def genPodium(ldr_brd: list) -> str:
     """
+    Doesn't function properly atm, when changing tags with usernames, the spaces changes as well.
+    A suggested solution is to count the amount of whitespaces needed to be perfectly aligned.
     Gets the podium art from podium.txt, switches the top three players from the leaderboard into a new copied file,
     returns  the named podium as str.
     :param ldr_brd: Leaderboard to check the top 3 players from.
@@ -401,21 +439,48 @@ def genPodium(ldr_brd: list) -> str:
     return podium
 
 
+def changeInScore(old_score: int, new_score: int) -> int:
+    """
+    Calculates the change in the user's score
+    :param old_score: User's score before started playing.
+    :param new_score: User's score after finishing playing.
+    :return: Difference in score.
+    """
+    if new_score > old_score:
+        diff = new_score - old_score
+        print(f'Your score has increased by {Colors.BOLD}{diff}{Colors.END} points.')
+        return diff
+    elif old_score == new_score:
+        print("Your score hasn't changed.")
+        return 0
+    else:  # if old score > new_score
+        diff = old_score - new_score
+        print(f'Your score has decreased by {Colors.BOLD}{diff}{Colors.END} points.')
+        return diff
+
+
+def chooseMode():
+    # func to let user choose if 1 round is needed or more
+    pass
+
+
 def main() -> None:
     """
     Main function that runs the program.
     :return: None.
     """
     user_name = input("Enter your user name: ")
-    checkUser(user_name)
+    initiated_score = getUserData(usr_name=user_name, data="Score")
+    checkUser(user_name)  # includes printing the user's score
     rounds = int(input("Enter the amount of rounds you'd like to play: "))
     for i in range(rounds):
         checkAnswer(usr_name=user_name)
     user_score = getUserData(usr_name=user_name, data="Score")
-    print("Your updated score is now " + Colors.BOLD + str(user_score) + Colors.END)
+    print("Your updated score is " + Colors.BOLD + str(user_score) + Colors.END + ".")
     leaderboard = CalcLeaderboard()
     user_rank = getUserRank(usr_name=user_name, ldr_brd=leaderboard)
     printUserRank(user_rank)
+    changeInScore(old_score=initiated_score, new_score=user_score)
     # print(genPodium(leaderboard))
 
 
