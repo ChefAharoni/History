@@ -484,6 +484,7 @@ def chooseMode(usr_name) -> Type[ValueError] | None:
     :return: None (or error if user's prompt is invalid)
     """
     # enter check for proper input
+    # avg calc is not good; should add the number of rounds to another parameter and calc the avg with that number.
     rounds = int(input("Enter the amount of rounds you'd like to play: "))
     if rounds == 1:
         country = drawCountry()
@@ -502,7 +503,6 @@ def chooseMode(usr_name) -> Type[ValueError] | None:
     else:  # change later to proper value checking
         return ValueError
     updateAvgTimePerRound(usr_name=usr_name, key="Average answer time per round", this_round_avg_t_pr=avg_t_per_round)
-
 
 
 def updateAvgTimePerRound(usr_name: str, key: str, this_round_avg_t_pr: float) -> None:
@@ -545,8 +545,6 @@ def main() -> None:
     user_avg_ans_t = getUserData(usr_name=user_name, data="Average answer time per round")
     print(f'Your average answer time per round is {Fore.LIGHTWHITE_EX}{user_avg_ans_t:.3f}{Fore.RESET} seconds.')
     # print(genPodium(leaderboard))
-
-
 
 
 if __name__ == "__main__":
