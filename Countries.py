@@ -1,6 +1,8 @@
+#! /Users/amitaharoni/Library/CloudStorage/Dropbox/03. Main Personal/02. Programming/01. Python/01. Python Projects/E. History/HistoryENVI/bin/python
+
 import time
 from random import randint  # to randomly draw countries
-import json  # to handle json filed
+import json  # to handle json files
 from typing import Any, Type  # for type hints
 import inflect  # for formatting number strings: 1st, 2nd, 3rd, etc..
 from Resources.myStyles import Colors  # for formatting strings with colors
